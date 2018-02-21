@@ -1,14 +1,40 @@
-version: "2"
-services:
-  web:
-    build: .
-    ports:
-      - "3000:3000"
-    links:
-      - mongo
-  mongo:
-    image: mongo
-    volumes:
-      - /data/mongodb/db:/data/db
-    ports:
-      - "27017:27017"
+mongodb-master:
+  image: mongo
+  volumes:
+    - /data/mongodb/db:/data/db
+  ports:
+    - "27017:27017"
+  command: mongod --smallfiles --replSet bigdaddy
+
+
+mongodb-slave1:
+  image: mongo
+  # volumes:
+  #   - /data/mongodbslave1/db:/data/db
+  ports:
+    - "27018:27017"
+  # links:
+  #   - mongodb-master
+  command: mongod --smallfiles --replSet bigdaddy
+
+mongodb-slave2:
+  image: mongo
+  # volumes:
+  #   - /data/mongodbslave2/db:/data/db
+  ports:
+    - "27019:27017"
+  # links:
+  #   - mongodb-master
+  command: mongod --smallfiles --replSet bigdaddy
+
+mongo-seed:
+  build: ./mongo-seed
+  links:
+    - mongodb-master
+
+web:
+  build: .
+  ports:
+    - "3000:3000"
+  links:
+    - mongodb-master

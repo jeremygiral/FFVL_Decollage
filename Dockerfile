@@ -13,4 +13,4 @@ ADD . /opt/app
 
 EXPOSE 3000
 
-CMD ["npm", "start"] && mongoimport --uri "mongodb://mongo/ffvl-decollage" -c site --file ../../tmp/decollages.json --jsonArray
+CMD ["npm","start"]

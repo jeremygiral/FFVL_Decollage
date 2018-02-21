@@ -1,4 +1,4 @@
-var mongoose=require('mongoose');
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var schema=new Schema({
@@ -9,8 +9,8 @@ var schema=new Schema({
     lat:{type: Number},
     lon:{type: Number}
   },
-  pratiques: [pratique: {type: String}],
-  orientations: [orientation: {type: String}],
+  pratiques: [{pratique: {type: String}}],
+  orientations: [{orientation: {type: String}}],
   altitude: {type: Number},
   structure: {type: Number},
   structure_id: {type: Number},
@@ -18,4 +18,4 @@ var schema=new Schema({
   isValable: {type: Boolean, default: true}
 });
 
-module.exports=mongoose.model('Site',schema);
+module.exports = mongoose.model('Site',schema);
