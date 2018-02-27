@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS site_orientation (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
+USE ffvldecollage;
 GRANT ALL PRIVILEGES ON ffvldecollage.* TO 'test'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 COMMIT;
