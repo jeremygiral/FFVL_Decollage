@@ -1,36 +1,28 @@
+
 mongodb-master:
+  hostname: mongodb-master
   image: mongo
-  volumes:
-    - /data/mongodb/db:/data/db
+  # volumes:
+  #   - ./data/mongodb-master:/data/db
   ports:
     - "27017:27017"
-  command: mongod --smallfiles --replSet bigdaddy
+    - "28017:28017"
 
+# mongo-seed:
+#   build: ./mongo-seed
+#   links:
+#     - mongodb-master
 
-mongodb-slave1:
-  image: mongo
-  # volumes:
-  #   - /data/mongodbslave1/db:/data/db
+mysql:
+  build: ./mysql-seed
+  environment:
+    MYSQL_ROOT_PASSWORD: "test"
+    MYSQL_DATABASE: "ffvldecollage"
+    MYSQL_USER: "test"
+    MYSQL_ROOT_PASSWORD: "test"
+  command: --init-file /tmp/create-mysql-db.sql
   ports:
-    - "27018:27017"
-  # links:
-  #   - mongodb-master
-  command: mongod --smallfiles --replSet bigdaddy
-
-mongodb-slave2:
-  image: mongo
-  # volumes:
-  #   - /data/mongodbslave2/db:/data/db
-  ports:
-    - "27019:27017"
-  # links:
-  #   - mongodb-master
-  command: mongod --smallfiles --replSet bigdaddy
-
-mongo-seed:
-  build: ./mongo-seed
-  links:
-    - mongodb-master
+    - "3306:3306"
 
 web:
   build: .
@@ -38,3 +30,4 @@ web:
     - "3000:3000"
   links:
     - mongodb-master
+    - mysql

@@ -13,7 +13,7 @@ var options = {
 router.get('/IsVolable/:IdSite',function(req,res,next){
   darksky = new DarkSky(options);
   var MongoClient = require('mongodb').MongoClient;
-  var url = "mongodb://mongodb/";
+  var url = "mongodb://mongodb-master/";
 
   var now = new Date();
   MongoClient.connect(url, function(err, db) {

@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var sites = require('./routes/sites');
 var api = require('./routes/api');
-
+var fs = require("fs");
 
 
 // permet de mettre une icone dans l'onglet
@@ -31,8 +31,49 @@ var index = require('./routes/index');
 var sites = require('./routes/sites');
 var api = require('./routes/api');
 var app = express();
+var mysql = require('mysql');
+var sys = require('util')
+var exec = require('child_process').exec;
 
-mongoose.connect('mongodb://mongodb/ffvl-decollage');
+
+var con = mysql.createConnection({
+  host: "mysql",
+  port: "3306",
+  user: "test",
+  password: "test",
+  database : "ffvldecollage"
+});
+
+con.connect(function(err) {
+  if (err) console.log(err);
+  console.log("Connected!");
+  con.query("SELECT * FROM SITES;", function (err, result) {
+    if (err){
+      var sql = fs.readFileSync("create-mysql-db.sql", "UTF-8");
+      con.query(sql, function (err, result) {
+        if (err) throw err;
+        //console.log("Result: " + result);
+      });
+    }
+  });
+});
+
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://mongodb-master/";
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("ffvl-decollage");
+  var csite = dbo.collection('site');
+  csite.count({},function(err, nbdocs) {
+    if (err) return next(err);
+    console.log(nbdocs);
+    if (nbdocs===0){
+      function puts(error, stdout, stderr) { sys.puts(stdout) }
+      exec("mongoimport --uri \"mongodb://mongodb-master/ffvl-decollage\" -c site --file decollages.json --jsonArray", puts);
+      console.log("init données ok");
+    }
+  });
+});
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

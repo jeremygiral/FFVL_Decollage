@@ -14,8 +14,10 @@
     "forecast.io": "0.0.11",
     "hbs": "~4.0.1",
     "mongodb": "^2.2.9",
+    "mongoimport": "^1.0.6",
     "mongoose": "^5.0.6",
     "morgan": "~1.9.0",
+    "mysql": "^2.15.0",
     "serve-favicon": "~2.4.5"
   }
 }
