@@ -4,8 +4,15 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 CREATE DATABASE IF NOT EXISTS ffvldecollage CHARACTER SET utf8 COLLATE utf8_general_ci;
-
+DROP USER IF EXISTS 'test'@'%';
+CREATE USER IF NOT EXISTS 'test'@'%' IDENTIFIED BY 'test';
 USE ffvldecollage;
+GRANT ALL PRIVILEGES ON *.* TO 'test'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,42 +32,43 @@ INSERT INTO discipline VALUES
 (2, 'P', 'parapente');
 
 CREATE TABLE IF NOT EXISTS orientation (
-  Id_orientation int(11) NOT NULL AUTO_INCREMENT,
-  Nom int(50) DEFAULT NULL,
+  Id_orientation int(11) NOT NULL,
+  Nom varchar(50) DEFAULT NULL,
   Degre varchar(50) DEFAULT NULL,
   Code varchar(3) DEFAULT NULL,
   PRIMARY KEY (Id_orientation)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
-INSERT INTO orientation VALUES
-(1, 0, '348,75 à 11,25', 'N'),
-(2, 0, '11,25 à 33,75', 'NNE'),
-(3, 0, '33,75 à 56,25', 'NE'),
-(4, 0, '56,25 à 78,75', 'ENE'),
-(5, 0, '78,75 à 101,25', 'E'),
-(6, 0, '101,25 à 123,75', 'ESE'),
-(7, 0, '123,75 à 146,25', 'SE'),
-(8, 0, '146,25 à 168,75', 'SSE'),
-(9, 0, '168,75 à 191,25', 'S'),
-(10, 0, '191,25 à 213,75', 'SSO'),
-(11, 0, '213,75 à 236,25', 'SO'),
-(12, 0, '236,25 à 258,75', 'OSO'),
-(13, 0, '258,75 à 281,25', 'O'),
-(14, 0, '281,25 à 303,75', 'ONO'),
-(15, 0, '303,75 à 326,25', 'NO'),
-(16, 0, '326,25 à 348,75', 'NNO');
+
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (1,'Nord','N','348,75 à 11,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (2,'Nord Nord Est','NNE','11,25 à 33,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (3,'Nord Est','NE','33,75 à 56,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (4,'Est Nord Est','ENE','56,25 à 78,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (5,'Est','E','78,75 à 101,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (6,'Est Sud Est','ESE','101,25 à 123,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (7,'Sud Est','SE','123,75 à 146,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (8,'Sud Sud Est','SSE','146,25 à 168,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (9,'Sud','S','168,75 à 191,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (10,'Sud Sud Ouest','SSO','191,25 à 213,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (11,'Sud Ouest','SO','213,75 à 236,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (12,'Ouest Sud Ouest','OSO','236,25 à 258,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (13,'Ouest','O','258,75 à 281,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (14,'Ouest Nord Ouest','ONO','281,25 à 303,75');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (15,'Nord Ouest','NO','303,75 à 326,25');
+INSERT INTO orientation (ID_ORIENTATION,NOM,CODE,DEGRE) VALUES (16,'Nord Nord Ouest','NNO','326,25 à 348,75');
+
 
 CREATE TABLE IF NOT EXISTS sites (
   identifiant int(11) NOT NULL,
   nom varchar(150) DEFAULT NULL,
   codepostal varchar(10) DEFAULT NULL,
-  lat decimal(10,0) DEFAULT NULL,
-  lon decimal(10,0) DEFAULT NULL,
+  lat decimal(9,7) DEFAULT NULL,
+  lon decimal(9,7) DEFAULT NULL,
   structure int(11) DEFAULT NULL,
   id_structure int(11) DEFAULT NULL,
-  last_update datetime DEFAULT NULL,
+  last_update datetime DEFAULT NULL/*,
   orientations set('N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO') DEFAULT NULL,
-  pratiques set('delta','parapente') DEFAULT NULL
+  pratiques set('delta','parapente') DEFAULT NULL*/
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS site_discipline (
@@ -77,9 +85,9 @@ CREATE TABLE IF NOT EXISTS site_orientation (
   PRIMARY KEY (id_site_orientation)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
+CREATE USER 'test1'@'localhost' IDENTIFIED BY 'test';
 USE ffvldecollage;
-GRANT ALL PRIVILEGES ON ffvldecollage.* TO 'test'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON ffvldecollage.* TO 'test1'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

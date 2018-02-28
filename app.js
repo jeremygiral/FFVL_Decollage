@@ -9,7 +9,7 @@ var index = require('./routes/index');
 var sites = require('./routes/sites');
 var api = require('./routes/api');
 var fs = require("fs");
-
+var Decimal = require('decimal.js');
 
 // permet de mettre une icone dans l'onglet
 var favicon = require('serve-favicon');
@@ -45,18 +45,52 @@ var con = mysql.createConnection({
 });
 
 con.connect(function(err) {
-  if (err) console.log(err);
-  console.log("Connected!");
-  con.query("SELECT * FROM SITES;", function (err, result) {
-    if (err){
-      var sql = fs.readFileSync("create-mysql-db.sql", "UTF-8");
-      con.query(sql, function (err, result) {
-        if (err) throw err;
-        //console.log("Result: " + result);
+  if (err) throw (err);
+  con.query("SELECT count(1) as nb FROM sites;", function (err, result) {
+    if (err) throw (err);
+    if(result[0].nb===0){
+      var parsejson = fs.readFileSync("decollages.json", "UTF-8");
+      var json=JSON.parse(parsejson);
+      json.forEach(function(site){
+
+        if(site.orientations){
+          site.orientations.orientation.forEach(function(or){
+            con.query("SELECT id_orientation FROM orientation WHERE Code='"+or._value+"'", function (err, result) {
+              if (err) throw err;
+              if(result[0]){
+                con.query("INSERT INTO site_orientation (id_site,id_orientation) VALUES ("+site._identifiant+","+result[0].id_orientation+");");
+              }
+            });
+
+          });
+        }
+        if(site.pratiques){
+          site.pratiques.pratique.forEach(function(pr){
+            con.query("SELECT id_discipline FROM discipline WHERE nom='"+pr._value+"'", function (err, result) {
+              if (err) throw err;
+              if(result[0]){
+                con.query("INSERT INTO site_discipline (id_site,id_discipline) VALUES ("+site._identifiant+","+result[0].id_discipline+")");
+              }
+            });
+          });
+        }
+        site._identifiant=site._identifiant|0;
+        site.nom=site.nom|'NA';
+        site.codepostal._value=site.codepostal._value|'NA';
+        site.coord._lat=new Decimal(site.coord._lat)|0;
+        site.coord._lon=new Decimal(site.coord._lon)|0;
+        site.structure._value=site.structure._value|0;
+        site.id._value=site.id._value|0;
+        var sql_site="INSERT INTO sites (identifiant,nom,codepostal,lat,lon,structure,id_structure) VALUES("+site._identifiant+",'"+site.nom+"','"+site.codepostal._value+"',"+site.coord._lat+","+site.coord._lon+","+site.structure._value+","+site.id._value+");";
+        con.query(sql_site, function (err, result) {
+          if (err) throw err;
+        });
       });
     }
   });
+
 });
+
 
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://mongodb-master/";
@@ -66,11 +100,9 @@ MongoClient.connect(url, function(err, db) {
   var csite = dbo.collection('site');
   csite.count({},function(err, nbdocs) {
     if (err) return next(err);
-    console.log(nbdocs);
     if (nbdocs===0){
       function puts(error, stdout, stderr) { sys.puts(stdout) }
       exec("mongoimport --uri \"mongodb://mongodb-master/ffvl-decollage\" -c site --file decollages.json --jsonArray", puts);
-      console.log("init données ok");
     }
   });
 });

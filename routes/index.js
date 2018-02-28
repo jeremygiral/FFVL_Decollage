@@ -36,6 +36,7 @@ router.get('/IsVolable/:IdSite',function(req,res,next){
         });
       } else {
         colm.aggregate([{$match: {idSite:req.params.IdSite}},{ $group : { _id: "$idSite", dateprev: { $max : "$dateprev" }}}]).toArray(function(err,maxmeteo){
+          if (err) throw err;
           if(maxmeteo && Math.abs(now - maxmeteo[0].dateprev)<2*60*1000){
             colm.findOne({idSite:maxmeteo[0]._id,dateprev:maxmeteo[0].dateprev},function(err,meteo){
               return res.json(meteo);
@@ -87,7 +88,7 @@ router.get('/IsVolable/:IdSite',function(req,res,next){
               } else {
                 dir = "N";
               }
-              if(dir===sitec.orientations.value || dir===sitec.orientations.orientation.value || sitec.orientations.orientation.value==="TOUTES"){
+              if(sitec.orientations.indexOf(dir)>-1 || sitec.orientations.orientation.value==="TOUTES"){
                 volable=true;
               } else {
                 volable=false;
@@ -114,10 +115,10 @@ router.get('/IsVolable/:IdSite',function(req,res,next){
               return res.json({resultats: resultat});
             });
           }
-      });
-    }
+        });
+      }
+    });
   });
-});
 });
 
 /* GET home page. */
