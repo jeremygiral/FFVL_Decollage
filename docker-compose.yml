@@ -1,4 +1,3 @@
-
 mongodb-master:
   hostname: mongodb-master
   image: mongo
