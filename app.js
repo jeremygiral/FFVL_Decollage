@@ -35,7 +35,6 @@ var mysql = require('mysql');
 var sys = require('util')
 var exec = require('child_process').exec;
 
-
 var con = mysql.createConnection({
   host: "mysql",
   port: "3306",
@@ -52,7 +51,6 @@ con.connect(function(err) {
       var parsejson = fs.readFileSync("decollages.json", "UTF-8");
       var json=JSON.parse(parsejson);
       json.forEach(function(site){
-
         if(site.orientations){
           site.orientations.orientation.forEach(function(or){
             con.query("SELECT id_orientation FROM orientation WHERE Code='"+or._value+"'", function (err, result) {
@@ -75,16 +73,17 @@ con.connect(function(err) {
           });
         }
         site._identifiant=site._identifiant|0;
-        site.nom=site.nom|'NA';
+        site.nom=site.nom.replace("'"," ");
+        site.nom=site.nom.replace("'"," ");
+        site.nom=site.nom.replace("'"," ");
+        site.nom=site.nom.replace("'"," ");
         site.codepostal._value=site.codepostal._value|'NA';
         site.coord._lat=new Decimal(site.coord._lat)|0;
         site.coord._lon=new Decimal(site.coord._lon)|0;
         site.structure._value=site.structure._value|0;
         site.id._value=site.id._value|0;
         var sql_site="INSERT INTO sites (identifiant,nom,codepostal,lat,lon,structure,id_structure) VALUES("+site._identifiant+",'"+site.nom+"','"+site.codepostal._value+"',"+site.coord._lat+","+site.coord._lon+","+site.structure._value+","+site.id._value+");";
-        con.query(sql_site, function (err, result) {
-          if (err) throw err;
-        });
+        con.query(sql_site);
       });
     }
   });
